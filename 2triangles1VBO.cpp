@@ -1,5 +1,5 @@
 //
-// Draw a rectangle on the screen.
+// Draw 2 triangles with only one VBO on the screen.
 //
 // Created by Hao He on 18-1-22.
 //
@@ -105,15 +105,12 @@ int main()
 
     // A set of vertices to describe a triangle
     float vertices[] = {
-            -0.5f, 0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
-            0.5f, 0.5f, 0.0f,
-
-    };
-    unsigned int indices[] = {
-            0, 1, 2, // first triangle
-            0, 2, 3, // second triangle
+            0.0f, 0.5f, 0.0f,
+            -0.5f, -0.75f, 0.0f,
+            -1.0f, -0.75f, 0.0f,
+            -0.75f, 0.0f, 0.0f,
     };
 
     // Vertex Buffer Objects(VBO) are used to pass vertices to GPU for the vertex shader
@@ -125,23 +122,14 @@ int main()
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
 
-    // Element Buffer Objects(EBO) describe additional information like indices of triangles
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // Tell OpenGL how tp interpret vertex data
     // Pass data to layout(location=0), each data 3 values, type float, no normalization,
     // with the stride as 3*sizeof(float)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
-
-    // Control whether to draw the rectangle in line mode.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // Game loop
     while (!glfwWindowShouldClose(window)) {
@@ -154,7 +142,8 @@ int main()
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -1,5 +1,5 @@
 //
-// Draw a rectangle on the screen.
+// Draw 2 triangles with two VBOs, meaning they represent two different graphic objects
 //
 // Created by Hao He on 18-1-22.
 //
@@ -104,44 +104,41 @@ int main()
     glDeleteShader(fragmentShader);
 
     // A set of vertices to describe a triangle
-    float vertices[] = {
-            -0.5f, 0.5f, 0.0f,
+    float triangle1[] = {
             -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
-            0.5f, 0.5f, 0.0f,
-
+            0.0f, 0.5f, 0.0f,
     };
-    unsigned int indices[] = {
-            0, 1, 2, // first triangle
-            0, 2, 3, // second triangle
-    };
-
     // Vertex Buffer Objects(VBO) are used to pass vertices to GPU for the vertex shader
-    unsigned int VBO;
+    unsigned int triangle1VBO;
     // 1 is assigned as the unique ID to this VBO
-    glGenBuffers(1, &VBO);
-
+    glGenBuffers(1, &triangle1VBO);
     // Vertex Array Objects(VAO) are used to store vertex attribute pointers
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-
-    // Element Buffer Objects(EBO) describe additional information like indices of triangles
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    unsigned int triangle1VAO;
+    glGenVertexArrays(1, &triangle1VAO);
+    glBindVertexArray(triangle1VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, triangle1VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle1), triangle1, GL_STATIC_DRAW);
     // Tell OpenGL how tp interpret vertex data
     // Pass data to layout(location=0), each data 3 values, type float, no normalization,
     // with the stride as 3*sizeof(float)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
 
-    // Control whether to draw the rectangle in line mode.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    float triangle2[] = {
+            -0.5f, -0.75f, 0.0f,
+            -1.0f, -0.75f, 0.0f,
+            -0.75f, 0.0f, 0.0f,
+    };
+    unsigned int triangle2VBO;
+    glGenBuffers(1, &triangle2VBO);
+    unsigned int triangle2VAO;
+    glGenVertexArrays(1, &triangle2VAO);
+    glBindVertexArray(triangle2VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, triangle2VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle2), triangle2, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+
 
     // Game loop
     while (!glfwWindowShouldClose(window)) {
@@ -153,8 +150,14 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        // Object1
+        glBindVertexArray(triangle1VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Object2
+        glBindVertexArray(triangle2VAO);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

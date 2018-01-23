@@ -24,3 +24,15 @@ target_link_libraries(glfwtest glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(triangle triangle.cpp glad.c)
 target_link_libraries(triangle glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(rectangle rectangle.cpp glad.c)
+target_link_libraries(rectangle glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(2triangles1VBO 2triangles1VBO.cpp glad.c)
+target_link_libraries(2triangles1VBO glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(2triangles2VBOs 2triangles2VBOs.cpp glad.c)
+target_link_libraries(2triangles2VBOs glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(2difftriangles 2difftriangles.cpp glad.c)
+target_link_libraries(2difftriangles glfw ${OPENGL_gl_LIBRARY})
