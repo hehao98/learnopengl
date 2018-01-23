@@ -33,7 +33,7 @@ int main()
         return -1;
     }
 
-    Shader shader((PROJECT_SOURCE_DIR + std::string("/shaders/basicvertex.vert")).c_str(),
+    Shader shader((PROJECT_SOURCE_DIR + std::string("/shaders/UpsideDown.vert")).c_str(),
                   (PROJECT_SOURCE_DIR + std::string("/shaders/basicfrag.frag")).c_str());
 
     // A set of vertices to describe a triangle

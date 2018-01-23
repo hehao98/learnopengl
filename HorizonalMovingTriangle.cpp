@@ -1,10 +1,11 @@
 //
-// Draw a triangle on the screen.
+// Draw a moving triangle on the screen.
 //
 // Created by Hao He on 18-1-22.
 //
 
 #include <iostream>
+#include <cmath>
 
 // GLAD: A library that wraps OpenGL functions to make things easier
 //       Note that GLAD MUST be included before GLFW
@@ -33,7 +34,7 @@ int main()
         return -1;
     }
 
-    Shader shader((PROJECT_SOURCE_DIR + std::string("/shaders/basicvertex.vert")).c_str(),
+    Shader shader((PROJECT_SOURCE_DIR + std::string("/shaders/HorizonalMovingTriangle.vert")).c_str(),
                   (PROJECT_SOURCE_DIR + std::string("/shaders/basicfrag.frag")).c_str());
 
     // A set of vertices to describe a triangle
@@ -71,6 +72,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.use();
+        shader.setFloat("horizonalOffset", sinf((float)glfwGetTime()) * 0.5f);
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 

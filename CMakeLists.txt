@@ -22,7 +22,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/glfw-3.2.1)
 add_executable(glfwtest glfwtest.cpp glad.c)
 target_link_libraries(glfwtest glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(triangle triangle.cpp glad.c)
+add_executable(triangle triangle.cpp glad.c Shader.cpp)
 target_link_libraries(triangle glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(rectangle rectangle.cpp glad.c)
@@ -36,3 +36,18 @@ target_link_libraries(2triangles2VBOs glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(2difftriangles 2difftriangles.cpp glad.c)
 target_link_libraries(2difftriangles glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(useshader useshader.cpp glad.c)
+target_link_libraries(useshader glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(vertexcolor vertexcolor.cpp glad.c)
+target_link_libraries(vertexcolor glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(UpsideDownTriangle UpsideDownTriangle.cpp Shader.cpp glad.c)
+target_link_libraries(UpsideDownTriangle glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(HorizonalMovingTriangle HorizonalMovingTriangle.cpp Shader.cpp glad.c)
+target_link_libraries(HorizonalMovingTriangle glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(VertexDataColoredTriangle VertexDataColoredTriangle.cpp Shader.cpp glad.c)
+target_link_libraries(VertexDataColoredTriangle glfw ${OPENGL_gl_LIBRARY})
