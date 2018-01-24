@@ -1,9 +1,12 @@
 # learnopengl
 #### Overview
-This is a repository that contains experimental and exercise
-code during my learning process of OpenGL. These exercises are done
-mostly based on tutorial from learnopengl.com. I'm tying to make some of
-them more interesting and original as long as I have had enough
-knowledge and skills on OpenGL programming.
+This is a personal repository that contains experimental and exercise
+code for learning OpenGL. These exercises are done
+mostly based on tutorial from [learnopengl.com](learnopengl.com).
+I'm tying to make some original and interesting demos as long as
+I have had enough knowledge and skills on OpenGL programming.
 #### Compile
-Currently it works only on Unix-alike systems.
+I created this repository on Ubuntu 16.04 with CLion, but I think it can also
+work on any Unix-based system with CMake.
+Make sure the `/shaders` folder have been copied to the executables'
+location before running them.

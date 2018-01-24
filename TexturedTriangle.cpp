@@ -1,5 +1,5 @@
 //
-// Draw a triangle on the screen.
+// Draw a textured triangle on the screen.
 //
 // Created by Hao He on 18-1-22.
 //
@@ -37,6 +37,11 @@ int main()
             -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
             0.0f, 0.5f, 0.0f,
+    };
+    float texCoords[] = {
+            0.0f, 0.0f,
+            1.0f, 0.5f,
+            0.5f, 1.0f,
     };
 
     // Vertex Buffer Objects(VBO) are used to pass vertices to GPU for the vertex shader

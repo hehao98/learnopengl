@@ -12,9 +12,6 @@
 // GLFW: A library that helps us manage windows
 #include <GLFW/glfw3.h>
 
-// Load necessary config information from CMake
-#include "config.h"
-
 #include "Shader.h"
 
 // Perform necessary initialization.
@@ -33,8 +30,7 @@ int main()
         return -1;
     }
 
-    Shader shader((PROJECT_SOURCE_DIR + std::string("/shaders/UpsideDown.vert")).c_str(),
-                  (PROJECT_SOURCE_DIR + std::string("/shaders/basicfrag.frag")).c_str());
+    Shader shader("shaders/UpsideDown.vert", "shaders/basicfrag.frag");
 
     // A set of vertices to describe a triangle
     float vertices[] = {

@@ -13,9 +13,6 @@
 // GLFW: A library that helps us manage windows
 #include <GLFW/glfw3.h>
 
-// Load necessary config information from CMake
-#include "config.h"
-
 const char *vertexShaderSource = "#version 330 core\n"
         "\n"
         "layout (location = 0) in vec3 aPos;\n"
