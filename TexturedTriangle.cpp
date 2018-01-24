@@ -5,6 +5,7 @@
 //
 
 #include <iostream>
+#include <algorithm>
 
 // GLAD: A library that wraps OpenGL functions to make things easier
 //       Note that GLAD MUST be included before GLFW
@@ -12,7 +13,13 @@
 // GLFW: A library that helps us manage windows
 #include <GLFW/glfw3.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include "Shader.h"
+
+// The Option to set the visibility of the smiling face
+float visibility = 0.2f;
 
 // Perform necessary initialization.
 // Returns pointer to a initialized window with OpenGL context set up
@@ -30,18 +37,64 @@ int main()
         return -1;
     }
 
-    Shader shader("shaders/basicvertex.vert", "shaders/basicfrag.frag");
+    // Load textures
+    unsigned int texture1;
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    // Set texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // Load and generate the texture
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture: textures/container.jpg" << std::endl;
+    }
+    stbi_image_free(data);
 
-    // A set of vertices to describe a triangle
+    unsigned int texture2;
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    // Set texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // Load and generate the texture
+    stbi_set_flip_vertically_on_load(true);
+    data = stbi_load("textures/awesomeface.png", &width, &height, &nrChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture: textures/aewsomeface.png" << std::endl;
+    }
+    stbi_image_free(data);
+
+
+    // Load shaders
+    Shader shader("shaders/TexturedTriangle.vert", "shaders/TexturedTriangle.frag");
+    shader.use();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
+    // A set of vertices to describe a rectangle
     float vertices[] = {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f, 0.5f, 0.0f,
+            // Positions        // colors         // texture coordinates
+            -0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+
     };
-    float texCoords[] = {
-            0.0f, 0.0f,
-            1.0f, 0.5f,
-            0.5f, 1.0f,
+    unsigned int indices[] = {
+            0, 1, 2, // first triangle
+            0, 2, 3, // second triangle
     };
 
     // Vertex Buffer Objects(VBO) are used to pass vertices to GPU for the vertex shader
@@ -53,14 +106,27 @@ int main()
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
 
+    // Element Buffer Objects(EBO) describe additional information like indices of triangles
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // Tell OpenGL how tp interpret vertex data
     // Pass data to layout(location=0), each data 3 values, type float, no normalization,
     // with the stride as 3*sizeof(float)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    // location 0: vertex location
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // location 1: vertex color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+    // location 2: texture coordinate
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // Game loop
     while (!glfwWindowShouldClose(window)) {
@@ -72,8 +138,15 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.use();
+        shader.setFloat("visibility", visibility);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -124,5 +197,17 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        if (visibility < 1.0f) {
+            visibility += 0.01f;
+            visibility = std::min(1.0f, visibility);
+        }
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        if (visibility > 0.0f) {
+            visibility -= 0.01f;
+            visibility = std::max(0.0f, visibility);
+        }
+    }
 }
 
