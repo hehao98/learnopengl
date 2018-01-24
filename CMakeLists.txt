@@ -8,6 +8,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/glfw-3.2.1)
 
+############## Getting Started ################
 add_executable(glfwtest src/GettingStarted/glfwtest.cpp src/glad.c)
 target_link_libraries(glfwtest glfw ${OPENGL_gl_LIBRARY})
 
@@ -32,15 +33,39 @@ target_link_libraries(useshader glfw ${OPENGL_gl_LIBRARY})
 add_executable(vertexcolor src/GettingStarted/vertexcolor.cpp src/glad.c)
 target_link_libraries(vertexcolor glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(UpsideDownTriangle src/GettingStarted/UpsideDownTriangle.cpp src/Shader.cpp src/glad.c)
+add_executable(
+        UpsideDownTriangle
+        src/GettingStarted/UpsideDownTriangle.cpp
+        src/Shader.cpp
+        src/glad.c
+)
 target_link_libraries(UpsideDownTriangle glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(HorizonalMovingTriangle src/GettingStarted/HorizonalMovingTriangle.cpp src/Shader.cpp src/glad.c)
+add_executable(
+        HorizonalMovingTriangle
+        src/GettingStarted/HorizonalMovingTriangle.cpp
+        src/Shader.cpp
+        src/glad.c
+)
 target_link_libraries(HorizonalMovingTriangle glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(VertexDataColoredTriangle src/GettingStarted/VertexDataColoredTriangle.cpp src/Shader.cpp src/glad.c)
+add_executable(VertexDataColoredTriangle
+        src/GettingStarted/VertexDataColoredTriangle.cpp
+        src/Shader.cpp
+        src/glad.c
+        )
 target_link_libraries(VertexDataColoredTriangle glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(TexturedTriangle src/GettingStarted/TexturedTriangle.cpp src/Shader.cpp src/glad.c)
+add_executable(
+        TexturedTriangle
+        src/GettingStarted/TexturedTriangle.cpp
+        src/Shader.cpp
+        src/glad.c
+)
 target_link_libraries(TexturedTriangle glfw ${OPENGL_gl_LIBRARY})
 
+add_executable(glmtest src/GettingStarted/glmtest.cpp)
+
+add_executable(RotatedFace src/GettingStarted/RotatedFace.cpp src/Shader.cpp src/glad.c)
+target_link_libraries(RotatedFace glfw ${OPENGL_gl_LIBRARY})
+##################################################
