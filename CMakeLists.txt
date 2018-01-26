@@ -68,4 +68,10 @@ add_executable(glmtest src/GettingStarted/glmtest.cpp)
 
 add_executable(RotatedFace src/GettingStarted/RotatedFace.cpp src/Shader.cpp src/glad.c)
 target_link_libraries(RotatedFace glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(Going3D src/GettingStarted/Going3D.cpp src/Shader.cpp src/glad.c)
+target_link_libraries(Going3D glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(Box src/GettingStarted/Box.cpp src/Shader.cpp src/glad.c)
+target_link_libraries(Box glfw ${OPENGL_gl_LIBRARY})
 ##################################################

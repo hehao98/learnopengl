@@ -1,5 +1,6 @@
 //
-// Draw a Rotated face on the screen.
+// Draw a container on the screen.
+// This time transformation is applied to achieve 3D effects.
 //
 // Created by Hao He on 18-1-22.
 //
@@ -18,13 +19,15 @@
 // GLFW: A library that helps us manage windows
 #include <GLFW/glfw3.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
+// My own wrapper classes to make things a little easier
 #include "Shader.h"
+#include "Texture.h"
+
+int gScreenWidth = 800;
+int gScreenHeight = 600;
 
 // The Option to set the visibility of the smiling face
-float visibility = 0.2f;
+float gVisibility = 0.2f;
 
 // Perform necessary initialization.
 // Returns pointer to a initialized window with OpenGL context set up
@@ -43,46 +46,11 @@ int main()
     }
 
     // Load textures
-    unsigned int texture1;
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    // Set texture wrapping/filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // Load and generate the texture
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture: textures/container.jpg" << std::endl;
-    }
-    stbi_image_free(data);
-
-    unsigned int texture2;
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    // Set texture wrapping/filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // Load and generate the texture
-    stbi_set_flip_vertically_on_load(true);
-    data = stbi_load("textures/awesomeface.png", &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture: textures/aewsomeface.png" << std::endl;
-    }
-    stbi_image_free(data);
+    Texture containerTexture("textures/container.jpg");
+    Texture faceTexture("textures/awesomeface.png");
 
     // Load shaders
-    Shader shader("shaders/RotatedFace.vert", "shaders/TexturedTriangle.frag");
+    Shader shader("shaders/Going3D.vert", "shaders/TexturedTriangle.frag");
     shader.use();
     shader.setInt("texture1", 0);
     shader.setInt("texture2", 1);
@@ -137,36 +105,29 @@ int main()
         // Handle user input
         processInput(window);
 
+        // Compute transformation
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        glm::mat4 projection = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(45.0f),
+                                      (float)gScreenWidth / gScreenHeight, 0.1f, 100.0f);
+
         // All the rendering is done here
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        auto t = (float)glfwGetTime();
-
-        // Draw first container
         shader.use();
-        shader.setFloat("visibility", visibility);
-        glm::mat4 trans = glm::mat4(1.0f);
+        shader.setFloat("visibility", gVisibility);
+        shader.setMat4("model", model);
+        shader.setMat4("view", view);
+        shader.setMat4("projection", projection);
 
-        trans = glm::rotate(trans, t, glm::vec3(0.0f, 0.0f, 1.0f));
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        int transformLoc = glGetUniformLocation(shader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
+        containerTexture.useTextureUnit(0);
+        faceTexture.useTextureUnit(1);
 
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-        // Draw second container
-        trans = glm::mat4(1.0f);
-        trans = glm::scale(trans, glm::vec3(sinf(t), sinf(t), sinf(t)));
-        trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
-        transformLoc = glGetUniformLocation(shader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
@@ -201,7 +162,7 @@ GLFWwindow *init()
     }
 
     // Tell OpenGL the size of rendering window
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, gScreenWidth, gScreenHeight);
 
     // Set the windows resize callback function
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
@@ -211,6 +172,8 @@ GLFWwindow *init()
 
 void frameBufferSizeCallback(GLFWwindow *window, int width, int height)
 {
+    gScreenWidth = width;
+    gScreenHeight = height;
     glViewport(0, 0, width, height);
 }
 
@@ -219,15 +182,15 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        if (visibility < 1.0f) {
-            visibility += 0.01f;
-            visibility = std::min(1.0f, visibility);
+        if (gVisibility < 1.0f) {
+            gVisibility += 0.01f;
+            gVisibility = std::min(1.0f, gVisibility);
         }
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        if (visibility > 0.0f) {
-            visibility -= 0.01f;
-            visibility = std::max(0.0f, visibility);
+        if (gVisibility > 0.0f) {
+            gVisibility -= 0.01f;
+            gVisibility = std::max(0.0f, gVisibility);
         }
     }
 }
