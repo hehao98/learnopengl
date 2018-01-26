@@ -8,7 +8,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/glfw-3.2.1)
 
-############## Getting Started ################
+################ Getting Started #################
 add_executable(glfwtest src/GettingStarted/glfwtest.cpp src/glad.c)
 target_link_libraries(glfwtest glfw ${OPENGL_gl_LIBRARY})
 
@@ -73,4 +73,10 @@ target_link_libraries(Box glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(Camera src/GettingStarted/Camera.cpp src/glad.c)
 target_link_libraries(Camera glfw ${OPENGL_gl_LIBRARY})
+##################################################
+
+
+#################### Lighting ####################
+add_executable(BasicLightingScene src/Lighting/BasicLightingScene.cpp src/glad.c)
+target_link_libraries(BasicLightingScene glfw ${OPENGL_gl_LIBRARY})
 ##################################################
