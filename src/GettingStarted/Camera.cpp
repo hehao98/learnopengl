@@ -1,6 +1,6 @@
 //
 // Draw boxes on the screen.
-// The camera automatically rotates around the scene.
+// We can control camera movement using WASD.
 //
 // Created by Hao He on 18-1-22.
 //
@@ -19,15 +19,21 @@
 // GLFW: A library that helps us manage windows
 #include <GLFW/glfw3.h>
 
-// My own wrapper classes to make things a little easier
+// Wrapper classes to make things a little easier
 #include "Shader.h"
 #include "Texture.h"
+#include "Camera.h"
 
 int gScreenWidth = 800;
 int gScreenHeight = 600;
 
+float gDeltaTime = 0.0f;
+float gLastFrame = 0.0f;
+
 // The Option to set the visibility of the smiling face
 float gVisibility = 0.0f;
+
+Camera gCamera;
 
 // Perform necessary initialization.
 // Returns pointer to a initialized window with OpenGL context set up
@@ -36,6 +42,9 @@ GLFWwindow *init();
 void frameBufferSizeCallback(GLFWwindow *window, int width, int height);
 // User input is handled in this function
 void processInput(GLFWwindow *window);
+// Mouse input is handled in this function
+void mouseCallback(GLFWwindow *window, double xpos, double ypos);
+void scrollCallback(GLFWwindow *window, double offsetX, double offsetY);
 
 int main()
 {
@@ -45,20 +54,7 @@ int main()
         return -1;
     }
 
-    /*
-    // Set up camera
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-    glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
-
-    // Let glm construct camera view matrix automatically
-    glm::mat4 view;
-    view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-                       glm::vec3(0.0f, 1.0f, 0.0f));
-    */
+    gCamera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
 
     // Load textures
     Texture containerTexture("textures/container.jpg");
@@ -141,24 +137,22 @@ int main()
 
     // Game loop
     while (!glfwWindowShouldClose(window)) {
+        // Calculate how much time since last frame
+        auto currentFrame = (float)glfwGetTime();
+        gDeltaTime = currentFrame - gLastFrame;
+        gLastFrame = currentFrame;
+
         // Handle user input
         processInput(window);
 
-        // All the rendering is done here
+        // All the rendering stars from here
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Let camera rotate around the scene
-        float radius = 8.0f;
-        float camX = sinf((float)glfwGetTime()) * radius;
-        float camZ = cosf((float)glfwGetTime()) * radius;
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
-                           glm::vec3(0.0f, 0.0f, 0.0f),
-                           glm::vec3(0.0f, 1.0f, 0.0f));
-
+        // Set up view and projection matrix
+        glm::mat4 view = gCamera.GetViewMatrix();
         glm::mat4 projection = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(45.0f),
+        projection = glm::perspective(glm::radians(gCamera.Zoom),
                                       (float)gScreenWidth / gScreenHeight, 0.1f, 100.0f);
 
         shader.use();
@@ -195,6 +189,8 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
+        // Rendering Ends here
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -218,6 +214,7 @@ GLFWwindow *init()
         glfwTerminate();
         return nullptr;
     }
+
     glfwMakeContextCurrent(window);
 
     // Initialize GLAD before calling OpenGL functions
@@ -232,6 +229,11 @@ GLFWwindow *init()
     // Set the windows resize callback function
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
 
+    // Set up mouse input
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetScrollCallback(window, scrollCallback);
+
     return window;
 }
 
@@ -244,8 +246,11 @@ void frameBufferSizeCallback(GLFWwindow *window, int width, int height)
 
 void processInput(GLFWwindow *window)
 {
+    // Exit
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    // Adjust the smile face
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         if (gVisibility < 1.0f) {
             gVisibility += 0.01f;
@@ -258,5 +263,44 @@ void processInput(GLFWwindow *window)
             gVisibility = std::max(0.0f, gVisibility);
         }
     }
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        gCamera.ProcessKeyboard(FORWARD, gDeltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        gCamera.ProcessKeyboard(BACKWARD, gDeltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        gCamera.ProcessKeyboard(LEFT, gDeltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        gCamera.ProcessKeyboard(RIGHT, gDeltaTime);
+    }
 }
 
+void mouseCallback(GLFWwindow *window, double xpos, double ypos)
+{
+    // Variables needed to handle mouse input
+    static float lastMouseX = 400.0f;
+    static float lastMouseY = 300.0f;
+    static bool firstMouse = true;
+
+    if (firstMouse) {
+        lastMouseX = (float)xpos;
+        lastMouseY = (float)ypos;
+        firstMouse = false;
+    }
+
+    // Calculate mouse movement since last frame
+    float offsetX = (float)xpos - lastMouseX;
+    float offsetY = (float)ypos - lastMouseY;
+    lastMouseX = (float)xpos;
+    lastMouseY = (float)ypos;
+
+    gCamera.ProcessMouseMovement(offsetX, offsetY);
+}
+
+void scrollCallback(GLFWwindow *window, double offsetX, double offsetY)
+{
+    gCamera.ProcessMouseScroll((float)offsetY);
+}

@@ -12,7 +12,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/glfw-3.2.1)
 add_executable(glfwtest src/GettingStarted/glfwtest.cpp src/glad.c)
 target_link_libraries(glfwtest glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(triangle src/GettingStarted/triangle.cpp src/glad.c src/Shader.cpp)
+add_executable(triangle src/GettingStarted/triangle.cpp src/glad.c)
 target_link_libraries(triangle glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(rectangle src/GettingStarted/rectangle.cpp src/glad.c)
@@ -36,7 +36,6 @@ target_link_libraries(vertexcolor glfw ${OPENGL_gl_LIBRARY})
 add_executable(
         UpsideDownTriangle
         src/GettingStarted/UpsideDownTriangle.cpp
-        src/Shader.cpp
         src/glad.c
 )
 target_link_libraries(UpsideDownTriangle glfw ${OPENGL_gl_LIBRARY})
@@ -44,14 +43,12 @@ target_link_libraries(UpsideDownTriangle glfw ${OPENGL_gl_LIBRARY})
 add_executable(
         HorizonalMovingTriangle
         src/GettingStarted/HorizonalMovingTriangle.cpp
-        src/Shader.cpp
         src/glad.c
 )
 target_link_libraries(HorizonalMovingTriangle glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(VertexDataColoredTriangle
         src/GettingStarted/VertexDataColoredTriangle.cpp
-        src/Shader.cpp
         src/glad.c
         )
 target_link_libraries(VertexDataColoredTriangle glfw ${OPENGL_gl_LIBRARY})
@@ -59,19 +56,21 @@ target_link_libraries(VertexDataColoredTriangle glfw ${OPENGL_gl_LIBRARY})
 add_executable(
         TexturedTriangle
         src/GettingStarted/TexturedTriangle.cpp
-        src/Shader.cpp
         src/glad.c
 )
 target_link_libraries(TexturedTriangle glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(glmtest src/GettingStarted/glmtest.cpp)
 
-add_executable(RotatedFace src/GettingStarted/RotatedFace.cpp src/Shader.cpp src/glad.c)
+add_executable(RotatedFace src/GettingStarted/RotatedFace.cpp src/glad.c)
 target_link_libraries(RotatedFace glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(Going3D src/GettingStarted/Going3D.cpp src/Shader.cpp src/glad.c)
+add_executable(Going3D src/GettingStarted/Going3D.cpp src/glad.c)
 target_link_libraries(Going3D glfw ${OPENGL_gl_LIBRARY})
 
-add_executable(Box src/GettingStarted/Box.cpp src/Shader.cpp src/glad.c)
+add_executable(Box src/GettingStarted/Box.cpp src/glad.c)
 target_link_libraries(Box glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(Camera src/GettingStarted/Camera.cpp src/glad.c)
+target_link_libraries(Camera glfw ${OPENGL_gl_LIBRARY})
 ##################################################
