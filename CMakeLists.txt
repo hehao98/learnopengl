@@ -79,4 +79,13 @@ target_link_libraries(Camera glfw ${OPENGL_gl_LIBRARY})
 #################### Lighting ####################
 add_executable(BasicLightingScene src/Lighting/BasicLightingScene.cpp src/glad.c)
 target_link_libraries(BasicLightingScene glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(Phong src/Lighting/Phong.cpp src/glad.c)
+target_link_libraries(Phong glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(PhongInViewSpace src/Lighting/PhongInViewSpace.cpp src/glad.c)
+target_link_libraries(PhongInViewSpace glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(Gouraud src/Lighting/Gouraud.cpp src/glad.c)
+target_link_libraries(Gouraud glfw ${OPENGL_gl_LIBRARY})
 ##################################################
