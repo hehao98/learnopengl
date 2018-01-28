@@ -31,7 +31,7 @@ void main()
     vec3 n = normalize(normal);
     vec3 lightDir = normalize(light.position - fragPosition.xyz);
     float diffuse = max(dot(lightDir, n), 0.0f);
-    vec3 diffuseLight = vec3(texture(material.diffuse, texCoord)) * light.diffuse;
+    vec3 diffuseLight = diffuse * vec3(texture(material.diffuse, texCoord)) * light.diffuse;
 
     vec3 reflectDir = normalize(reflect(-lightDir, n));
     vec3 viewDir = normalize(viewPos - fragPosition.xyz);

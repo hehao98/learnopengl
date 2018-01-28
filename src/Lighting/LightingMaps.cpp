@@ -206,14 +206,12 @@ int main()
         objectShader.setVec3("viewPos", gCamera.Position);
 
         // Set up material properties
-        objectShader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-        objectShader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
         objectShader.setFloat("material.shininess", 32.0f);
 
         objectShader.setVec3("light.position", lightSource);
         objectShader.setVec3("light.ambient", lightColor * glm::vec3(0.2f));
-        objectShader.setVec3("light.diffuse", lightColor * glm::vec3(0.5f, 0.5f, 0.5f));
-        objectShader.setVec3("light.specular", lightColor * glm::vec3(1.0f, 1.0f, 1.0f));
+        objectShader.setVec3("light.diffuse", lightColor * glm::vec3(0.5f));
+        objectShader.setVec3("light.specular", lightColor * glm::vec3(1.0f));
 
         ambientMap.useTextureUnit(0);
         specularMap.useTextureUnit(1);
