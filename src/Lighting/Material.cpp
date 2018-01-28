@@ -1,5 +1,6 @@
 //
 // Draw boxes on the screen using Phong shading.
+// Add material settings for more flexibility
 // We can control camera movement using WASD.
 //
 // Created by Hao He on 18-1-22.
@@ -31,6 +32,8 @@ float gLastFrame = 0.0f;
 
 Camera gCamera;
 
+bool gFunky = false;
+
 // Perform necessary initialization.
 // Returns pointer to a initialized window with OpenGL context set up
 GLFWwindow *init();
@@ -56,10 +59,7 @@ int main()
                              "shaders/LightSource.frag");
 
     // Load Object Shader
-    Shader objectShader("shaders/Phong.vert", "shaders/Phong.frag");
-    objectShader.use();
-    objectShader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.3f));
-    objectShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    Shader objectShader("shaders/Phong.vert", "shaders/Material.frag");
 
     // A set of vertices to describe a cube(with normal vectors)
     float vertices[] = {
@@ -165,8 +165,19 @@ int main()
         lightSource = glm::vec3(3.0f * sinf(currentFrame), 0.5f, 3.0f * cosf(currentFrame));
 
         lightSourceShader.use();
+
+        // Set up light properties
+        glm::vec3 lightColor = glm::vec3(1.0f);
+        if (gFunky) {
+            float lightR = sinf((float) glfwGetTime() * 2.0f);
+            float lightG = cosf((float) glfwGetTime() * 0.8f);
+            float lightB = sinf((float) glfwGetTime() * 1.5f);
+            lightColor = glm::vec3(lightR, lightG, lightB);
+        }
+
         lightSourceShader.setMat4("view", view);
         lightSourceShader.setMat4("projection", projection);
+        lightSourceShader.setVec3("lightColor", lightColor);
 
         glm::mat4 lightShaderModel = glm::mat4(1.0f);
         lightShaderModel = glm::translate(lightShaderModel, lightSource);
@@ -179,8 +190,18 @@ int main()
         objectShader.use();
         objectShader.setMat4("view", view);
         objectShader.setMat4("projection", projection);
-        objectShader.setVec3("lightSource", lightSource);
         objectShader.setVec3("viewPos", gCamera.Position);
+
+        // Set up material properties
+        objectShader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+        objectShader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+        objectShader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+        objectShader.setFloat("material.shininess", 32.0f);
+
+        objectShader.setVec3("light.position", lightSource);
+        objectShader.setVec3("light.ambient", lightColor * glm::vec3(0.2f));
+        objectShader.setVec3("light.diffuse", lightColor * glm::vec3(0.5f, 0.5f, 0.5f));
+        objectShader.setVec3("light.specular", lightColor * glm::vec3(1.0f, 1.0f, 1.0f));
 
         glm::vec3 cubePositions[] = {
                 glm::vec3(-1.0f,  1.0f, -2.0f),
@@ -272,6 +293,9 @@ void processInput(GLFWwindow *window)
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         gCamera.ProcessKeyboard(RIGHT, gDeltaTime);
+    }
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        gFunky = !gFunky;
     }
 }
 
