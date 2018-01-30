@@ -94,4 +94,10 @@ target_link_libraries(Material glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(LightingMaps src/Lighting/LightingMaps.cpp src/glad.c)
 target_link_libraries(LightingMaps glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(DirectionalLight src/Lighting/DirectionalLight.cpp src/glad.c)
+target_link_libraries(DirectionalLight glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(Spotlight src/Lighting/Spotlight.cpp src/glad.c)
+target_link_libraries(Spotlight glfw ${OPENGL_gl_LIBRARY})
 ##################################################

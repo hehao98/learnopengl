@@ -1,7 +1,5 @@
 //
-// Draw boxes on the screen using Phong shading.
-// Added lighting maps
-// We can control camera movement using WASD.
+// Light the scene using directional light
 //
 // Created by Hao He on 18-1-22.
 //
@@ -65,7 +63,7 @@ int main()
                              "shaders/LightSource.frag");
 
     // Load Object Shader
-    Shader objectShader("shaders/LightingMaps.vert", "shaders/LightingMaps.frag");
+    Shader objectShader("shaders/LightingMaps.vert", "shaders/DirectionalLight.frag");
     objectShader.use();
     objectShader.setInt("material.diffuse", 0);
     objectShader.setInt("material.specular", 1);
@@ -197,7 +195,7 @@ int main()
         lightShaderModel = glm::scale(lightShaderModel, glm::vec3(0.05f));
         lightSourceShader.setMat4("model", lightShaderModel);
         glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // Draw the cubes
         objectShader.use();
@@ -208,31 +206,34 @@ int main()
         // Set up material properties
         objectShader.setFloat("material.shininess", 32.0f);
 
-        objectShader.setVec3("light.position", lightSource);
+        objectShader.setVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
         objectShader.setVec3("light.ambient", lightColor * glm::vec3(0.2f));
         objectShader.setVec3("light.diffuse", lightColor * glm::vec3(0.5f));
         objectShader.setVec3("light.specular", lightColor * glm::vec3(1.0f));
-        objectShader.setFloat("light.constant", 1.0f);
-        objectShader.setFloat("light.linear", 0.022f);
-        objectShader.setFloat("light.quadratic", 0.0010f);
 
         ambientMap.useTextureUnit(0);
         specularMap.useTextureUnit(1);
         if (gEmission) emissionMap.useTextureUnit(2);
 
         glm::vec3 cubePositions[] = {
-                glm::vec3(-0.5f,  0.8f, -2.0f),
-                glm::vec3(-1.5f, -1.5f, -3.0f),
+                glm::vec3( 0.0f,  0.0f,  0.0f),
+                glm::vec3( 2.0f,  5.0f, -15.0f),
+                glm::vec3(-1.5f, -2.2f, -2.5f),
+                glm::vec3(-3.8f, -2.0f, -12.3f),
+                glm::vec3( 2.4f, -0.4f, -3.5f),
+                glm::vec3(-1.7f,  3.0f, -7.5f),
+                glm::vec3( 1.3f, -2.0f, -2.5f),
+                glm::vec3( 1.5f,  2.0f, -2.5f),
+                glm::vec3( 1.5f,  0.2f, -1.5f),
+                glm::vec3(-1.3f,  1.0f, -1.5f)
         };
 
         glBindVertexArray(VAO);
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 10; ++i) {
             // Compute model transformations for each cube
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             model = glm::rotate(model, glm::radians(30.0f * i), glm::vec3(1.0f, 0.5f, 1.0f));
-            if (i == 0) model = glm::scale(model, glm::vec3(1.5f));
-            else model = glm::scale(model, glm::vec3(0.8f));
 
             objectShader.setMat4("model", model);
 

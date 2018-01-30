@@ -1,7 +1,5 @@
 //
-// Draw boxes on the screen using Phong shading.
-// Added lighting maps
-// We can control camera movement using WASD.
+// A spotlight is following the camera this time.
 //
 // Created by Hao He on 18-1-22.
 //
@@ -33,7 +31,6 @@ float gLastFrame = 0.0f;
 
 Camera gCamera;
 
-bool gFunky = false;
 bool gEmission = false;
 
 // Perform necessary initialization.
@@ -59,13 +56,8 @@ int main()
     Texture specularMap("textures/container2_specular.png");
     Texture emissionMap("textures/container2_emission.jpg");
 
-    // Load shaders
-    // Load light source shader
-    Shader lightSourceShader("shaders/BasicLightingScene.vert",
-                             "shaders/LightSource.frag");
-
     // Load Object Shader
-    Shader objectShader("shaders/LightingMaps.vert", "shaders/LightingMaps.frag");
+    Shader objectShader("shaders/LightingMaps.vert", "shaders/Spotlight.frag");
     objectShader.use();
     objectShader.setInt("material.diffuse", 0);
     objectShader.setInt("material.specular", 1);
@@ -139,20 +131,10 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // For simplicity's sake in the future,
-    // we put the light source in a separate VAO
-    unsigned int lightVAO;
-    glGenVertexArrays(1, &lightVAO);
-    glBindVertexArray(lightVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
     glEnable(GL_DEPTH_TEST);
 
+    glm::vec3 lightColor = glm::vec3(1.0f);
     gCamera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
-    glm::vec3 lightSource = glm::vec3(1.2f, 0.5f, 1.0f);
 
     // Game loop
     while (!glfwWindowShouldClose(window)) {
@@ -173,32 +155,6 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(gCamera.Zoom),
                                                 (float)gScreenWidth / gScreenHeight, 0.1f, 100.0f);
 
-        // Draw the light source
-        // Update light source position first
-        lightSource = glm::vec3(3.0f * sinf(currentFrame), 0.5f, 3.0f * cosf(currentFrame));
-
-        lightSourceShader.use();
-
-        // Set up light properties
-        glm::vec3 lightColor = glm::vec3(1.0f);
-        if (gFunky) {
-            float lightR = sinf((float) glfwGetTime() * 2.0f);
-            float lightG = cosf((float) glfwGetTime() * 0.8f);
-            float lightB = sinf((float) glfwGetTime() * 1.5f);
-            lightColor = glm::vec3(lightR, lightG, lightB);
-        }
-
-        lightSourceShader.setMat4("view", view);
-        lightSourceShader.setMat4("projection", projection);
-        lightSourceShader.setVec3("lightColor", lightColor);
-
-        glm::mat4 lightShaderModel = glm::mat4(1.0f);
-        lightShaderModel = glm::translate(lightShaderModel, lightSource);
-        lightShaderModel = glm::scale(lightShaderModel, glm::vec3(0.05f));
-        lightSourceShader.setMat4("model", lightShaderModel);
-        glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
         // Draw the cubes
         objectShader.use();
         objectShader.setMat4("view", view);
@@ -208,31 +164,38 @@ int main()
         // Set up material properties
         objectShader.setFloat("material.shininess", 32.0f);
 
-        objectShader.setVec3("light.position", lightSource);
+        objectShader.setVec3("light.position", gCamera.Position);
+        objectShader.setVec3("light.direction", gCamera.Front);
         objectShader.setVec3("light.ambient", lightColor * glm::vec3(0.2f));
         objectShader.setVec3("light.diffuse", lightColor * glm::vec3(0.5f));
         objectShader.setVec3("light.specular", lightColor * glm::vec3(1.0f));
-        objectShader.setFloat("light.constant", 1.0f);
-        objectShader.setFloat("light.linear", 0.022f);
-        objectShader.setFloat("light.quadratic", 0.0010f);
+        objectShader.setFloat("light.innerCone", cosf(glm::radians(12.0f)));
+        objectShader.setFloat("light.outerCone", cosf(glm::radians(17.0f)));
 
         ambientMap.useTextureUnit(0);
         specularMap.useTextureUnit(1);
         if (gEmission) emissionMap.useTextureUnit(2);
 
         glm::vec3 cubePositions[] = {
-                glm::vec3(-0.5f,  0.8f, -2.0f),
-                glm::vec3(-1.5f, -1.5f, -3.0f),
+                glm::vec3( 0.0f,  0.0f,  0.0f),
+                glm::vec3( 2.0f,  5.0f, -15.0f),
+                glm::vec3(-1.5f, -2.2f, -2.5f),
+                glm::vec3(-3.8f, -2.0f, -12.3f),
+                glm::vec3( 2.4f, -0.4f, -3.5f),
+                glm::vec3(-1.7f,  3.0f, -7.5f),
+                glm::vec3( 1.3f, -2.0f, -2.5f),
+                glm::vec3( 1.5f,  2.0f, -2.5f),
+                glm::vec3( 1.5f,  0.2f, -1.5f),
+                glm::vec3(-1.3f,  1.0f, -1.5f)
         };
 
+
         glBindVertexArray(VAO);
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 10; ++i) {
             // Compute model transformations for each cube
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             model = glm::rotate(model, glm::radians(30.0f * i), glm::vec3(1.0f, 0.5f, 1.0f));
-            if (i == 0) model = glm::scale(model, glm::vec3(1.5f));
-            else model = glm::scale(model, glm::vec3(0.8f));
 
             objectShader.setMat4("model", model);
 
@@ -310,9 +273,6 @@ void processInput(GLFWwindow *window)
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         gCamera.ProcessKeyboard(RIGHT, gDeltaTime);
-    }
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        gFunky = !gFunky;
     }
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
         gEmission = !gEmission;
