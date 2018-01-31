@@ -100,4 +100,7 @@ target_link_libraries(DirectionalLight glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(Spotlight src/Lighting/Spotlight.cpp src/glad.c)
 target_link_libraries(Spotlight glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(MultipleLights src/Lighting/MultipleLights.cpp src/glad.c)
+target_link_libraries(MultipleLights glfw ${OPENGL_gl_LIBRARY})
 ##################################################
