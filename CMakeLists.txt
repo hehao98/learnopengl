@@ -6,6 +6,8 @@ find_package(OpenGL REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
+link_directories(${PROJECT_SOURCE_DIR}/lib)
+
 add_subdirectory(${PROJECT_SOURCE_DIR}/glfw-3.2.1)
 
 ################ Getting Started #################
@@ -103,4 +105,10 @@ target_link_libraries(Spotlight glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(MultipleLights src/Lighting/MultipleLights.cpp src/glad.c)
 target_link_libraries(MultipleLights glfw ${OPENGL_gl_LIBRARY})
+##################################################
+
+
+##################### Models #####################
+add_executable(nanosuit src/ModelLoading/nanosuit.cpp src/glad.c)
+target_link_libraries(nanosuit glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
