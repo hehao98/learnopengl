@@ -112,3 +112,9 @@ target_link_libraries(MultipleLights glfw ${OPENGL_gl_LIBRARY})
 add_executable(nanosuit src/ModelLoading/nanosuit.cpp src/glad.c)
 target_link_libraries(nanosuit glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
+
+
+################ Advanced OpenGL #################
+add_executable(ObjectOutlining src/AdvancedOpenGL/ObjectOutlining.cpp src/glad.c)
+target_link_libraries(ObjectOutlining glfw ${OPENGL_gl_LIBRARY} assimp)
+##################################################

@@ -1,6 +1,7 @@
 //
-// Load nanosuit model into the scene
-// Created by hehao on 18-2-3.
+// Outline a model using the stencil buffer
+// TODO: This piece of code is NOT working right
+// Created by hehao on 18-2-4.
 //
 
 #include <iostream>
@@ -64,11 +65,14 @@ int main()
     Model nanosuitModel("models/nanosuit/nanosuit.obj");
     Model nanosuitWireFrame("models/nanosuit/nanosuit.obj");
 
-    glEnable(GL_DEPTH_TEST);
-
     gCamera.Position = glm::vec3(0.0f, 1.5f, 3.0f);
     glm::vec3 lightSource = glm::vec3(1.2f, 0.5f, 1.0f);
     glm::vec3 lightColor = glm::vec3(1.0f);
+
+    glEnable(GL_DEPTH_TEST);
+    // If any of the depth test and stencil test fails, we keep the fragment
+    // iIf both passes, we replace previous fragment with new fragment
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     // Game loop
     while (!glfwWindowShouldClose(window)) {
@@ -82,7 +86,8 @@ int main()
 
         // All the rendering starts from here
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Clear color buffer, depth buffer and stencil buffer each frame
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         objectShader.use();
         // Set up view and projection matrix
@@ -112,23 +117,31 @@ int main()
         objectShader.setVec3("dirLight.diffuse", lightColor * glm::vec3(0.3f));
         objectShader.setVec3("dirLight.specular", lightColor * glm::vec3(1.0f));
 
-        objectShader.setVec3("spotLight.position", glm::vec3(0.0f, 3.0f, 0.0f));
-        objectShader.setVec3("spotLight.direction", spotLightTarget - glm::vec3(0.0f, 3.0f, 0.0f));
-        objectShader.setVec3("spotLight.ambient", lightColor * glm::vec3(0.1f));
-        objectShader.setVec3("spotLight.diffuse", lightColor * glm::vec3(0.5f));
-        objectShader.setVec3("spotLight.specular", lightColor * glm::vec3(1.0f));
-        objectShader.setFloat("spotLight.constant", 1.0f);
-        objectShader.setFloat("spotLight.linear", 0.022f);
-        objectShader.setFloat("spotLight.quadratic", 0.0010f);
-        objectShader.setFloat("spotLight.innerCone", cosf(glm::radians(15.0f)));
-        objectShader.setFloat("spotLight.outerCone", cosf(glm::radians(20.0f)));
-
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.1f));
         objectShader.setMat4("model", model);
 
+        // Draw original object
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
         nanosuitModel.Draw(objectShader);
+
+        // Draw surrounding lines
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glDisable(GL_DEPTH_TEST);
+        lightSourceShader.use();
+        model = glm::mat4(1.0f);
+        model = glm::scale(model, glm::vec3(0.11f));
+        lightSourceShader.setMat4("model", model);
+        lightSourceShader.setMat4("view", view);
+        lightSourceShader.setMat4("projection", projection);
+        lightSourceShader.setVec3("lightColor", glm::vec3(1.0f, 0.5f, 0.0f));
+
+        nanosuitModel.Draw(lightSourceShader);
+
+        glStencilMask(0xFF);
+        glEnable(GL_DEPTH_TEST);
 
         // Rendering Ends here
 
