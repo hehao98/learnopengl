@@ -120,4 +120,7 @@ target_link_libraries(ObjectOutlining glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_executable(Blending src/AdvancedOpenGL/Blending.cpp src/glad.c)
 target_link_libraries(Blending glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(PostProcessing-Inversion src/AdvancedOpenGL/PostProcessing-Inversion.cpp src/glad.c)
+target_link_libraries(PostProcessing-Inversion glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
