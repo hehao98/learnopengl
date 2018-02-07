@@ -126,4 +126,13 @@ target_link_libraries(PostProcessing-Inversion glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_executable(PostProcessing-GrayScale src/AdvancedOpenGL/PostProcessing-GrayScale.cpp src/glad.c)
 target_link_libraries(PostProcessing-GrayScale glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(PostProcessing-KernelEffect src/AdvancedOpenGL/PostProcessing-KernelEffect.cpp src/glad.c)
+target_link_libraries(PostProcessing-KernelEffect glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(PostProcessing-Blur src/AdvancedOpenGL/PostProcessing-Blur.cpp src/glad.c)
+target_link_libraries(PostProcessing-Blur glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(PostProcessing-EdgeDetection src/AdvancedOpenGL/PostProcessing-EdgeDetection.cpp src/glad.c)
+target_link_libraries(PostProcessing-EdgeDetection glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
