@@ -135,4 +135,7 @@ target_link_libraries(PostProcessing-Blur glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_executable(PostProcessing-EdgeDetection src/AdvancedOpenGL/PostProcessing-EdgeDetection.cpp src/glad.c)
 target_link_libraries(PostProcessing-EdgeDetection glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(SkyBox src/AdvancedOpenGL/SkyBox.cpp src/glad.c)
+target_link_libraries(SkyBox glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
