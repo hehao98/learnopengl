@@ -123,4 +123,7 @@ target_link_libraries(Blending glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_executable(PostProcessing-Inversion src/AdvancedOpenGL/PostProcessing-Inversion.cpp src/glad.c)
 target_link_libraries(PostProcessing-Inversion glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(PostProcessing-GrayScale src/AdvancedOpenGL/PostProcessing-GrayScale.cpp src/glad.c)
+target_link_libraries(PostProcessing-GrayScale glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
