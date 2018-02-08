@@ -138,4 +138,13 @@ target_link_libraries(PostProcessing-EdgeDetection glfw ${OPENGL_gl_LIBRARY} ass
 
 add_executable(SkyBox src/AdvancedOpenGL/SkyBox.cpp src/glad.c)
 target_link_libraries(SkyBox glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(StaticReflection src/AdvancedOpenGL/StaticReflection.cpp src/glad.c)
+target_link_libraries(StaticReflection glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(StaticRefraction src/AdvancedOpenGL/StaticRefraction.cpp src/glad.c)
+target_link_libraries(StaticRefraction glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_Executable(DynamicEnvironmentMap src/AdvancedOpenGL/DynamicEnvironmentMap.cpp src/glad.c)
+target_link_libraries(DynamicEnvironmentMap glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
