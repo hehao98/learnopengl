@@ -145,6 +145,12 @@ target_link_libraries(StaticReflection glfw ${OPENGL_gl_LIBRARY} assimp)
 add_executable(StaticRefraction src/AdvancedOpenGL/StaticRefraction.cpp src/glad.c)
 target_link_libraries(StaticRefraction glfw ${OPENGL_gl_LIBRARY} assimp)
 
+add_executable(DynamicReflection src/AdvancedOpenGL/DynamicReflection.cpp src/glad.c)
+target_link_libraries(DynamicReflection glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(DynamicRefraction src/AdvancedOpenGL/DynamicRefraction.cpp src/glad.c)
+target_link_libraries(DynamicRefraction glfw ${OPENGL_gl_LIBRARY} assimp)
+
 add_Executable(DynamicEnvironmentMap src/AdvancedOpenGL/DynamicEnvironmentMap.cpp src/glad.c)
 target_link_libraries(DynamicEnvironmentMap glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################

@@ -17,3 +17,6 @@ a directional light source and a spotlight is implemented.
 2. Applied the same shader to the nanosuit model acquired from
 [learnopengl.com](learnopengl.com)
 ![](screenshots/Nanosuit.png)
+3. An improved scene with grasses, transparent windows and a box that
+reflects all objects in the scene.
+![](screenshots/DynamicReflection.png)
