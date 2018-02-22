@@ -153,4 +153,7 @@ target_link_libraries(DynamicRefraction glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_Executable(DynamicEnvironmentMap src/AdvancedOpenGL/DynamicEnvironmentMap.cpp src/glad.c)
 target_link_libraries(DynamicEnvironmentMap glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(GeometryShader src/AdvancedOpenGL/GeometryShader.cpp src/glad.c)
+target_link_libraries(GeometryShader glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################

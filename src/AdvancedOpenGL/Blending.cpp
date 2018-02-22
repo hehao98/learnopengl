@@ -1,4 +1,6 @@
 //
+// Alert: This program is tailored for Mac OS X.
+// May not run well on Ubuntu.
 // Created by hehao on 18-2-4.
 //
 
@@ -311,9 +313,10 @@ GLFWwindow *init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     // Create a window object
-    GLFWwindow *window = glfwCreateWindow(800, 600, "Lighting Scene", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(gScreenWidth, gScreenHeight, "Lighting Scene", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Failed to create GLFW window!" << std::endl;
         glfwTerminate();
@@ -329,7 +332,7 @@ GLFWwindow *init()
     }
 
     // Tell OpenGL the size of rendering window
-    glViewport(0, 0, gScreenWidth, gScreenHeight);
+    glViewport(0, 0, gScreenWidth * 2, gScreenHeight * 2);
 
     // Set the windows resize callback function
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
