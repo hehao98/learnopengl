@@ -48,6 +48,8 @@ public:
                 number = std::to_string(diffuseNr++);
             else if(name == "texture_specular")
                 number = std::to_string(specularNr++);
+            else
+                number = std::to_string(diffuseNr++);
 
             shader.setFloat(("material." + name + number).c_str(), i);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
