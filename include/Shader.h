@@ -86,7 +86,7 @@ public:
         glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-            std::cout << "Failed to compile vertex shader!" << std::endl
+            std::cout << "Failed to compile vertex shader " << vertexPath << std::endl
                       << "Info: " << infoLog << std::endl;
         }
 
@@ -96,7 +96,7 @@ public:
         glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
-            std::cout << "Failed to compile fragment shader!" << std::endl
+            std::cout << "Failed to compile fragment shader " << fragmentPath << std::endl
                       << "Info: " << infoLog << std::endl;
         }
 

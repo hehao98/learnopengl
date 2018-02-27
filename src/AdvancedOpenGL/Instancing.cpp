@@ -1,5 +1,8 @@
 //
-// Created by hehao on 18-2-7.
+// Instancing is a way to draw multiple same objects
+// with only one GPU render call,
+// saving significant CPU/GPU communication time.
+// Created by 何昊 on 27/02/2018.
 //
 
 #include <iostream>
@@ -68,7 +71,7 @@ int main()
     Texture transparentWindowTexture("textures/blending_transparent_window.png");
 
     // Load shaders
-    Shader objectShader("shaders/MultipleLights.vert", "shaders/Discard.frag");
+    Shader objectShader("shaders/Instancing.vert", "shaders/Discard.frag");
     objectShader.use();
     objectShader.setInt("material.diffuse", 0);
     objectShader.setInt("material.specular", 1);
@@ -307,16 +310,15 @@ int main()
                 glm::vec3(-2.0f, 0.5f, -2.0f),
                 glm::vec3(-2.0f, 0.5, 2.0f),
         };
-        glBindVertexArray(cubeVAO);
+
         for (int i = 0; i < 5; ++i) {
             // Compute model transformations for each cube
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
-
-            objectShader.setMat4("model", model);
-
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            objectShader.setMat4("model[" + std::to_string(i) + "]" , model);
         }
+        glBindVertexArray(cubeVAO);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, 5);
 
         // Start to draw planes
         // Draw grasses
@@ -395,7 +397,7 @@ GLFWwindow *init()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     // Create a window object
-    GLFWwindow *window = glfwCreateWindow(800, 600, "Lighting Scene", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(gScreenWidth, gScreenHeight, "Instancing", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Failed to create GLFW window!" << std::endl;
         glfwTerminate();
@@ -411,7 +413,7 @@ GLFWwindow *init()
     }
 
     // Tell OpenGL the size of rendering window
-    glViewport(0, 0, gScreenWidth, gScreenHeight);
+    glViewport(0, 0, 2 * gScreenWidth, 2 * gScreenHeight);
 
     // Set the windows resize callback function
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
