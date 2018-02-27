@@ -165,4 +165,7 @@ target_link_libraries(NormalVisualing glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_executable(Instancing src/AdvancedOpenGL/Instancing.cpp src/glad.c)
 target_link_libraries(Instancing glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(AsteroidField src/AdvancedOpenGL/AsteroidField.cpp src/glad.c)
+target_link_libraries(AsteroidField glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
