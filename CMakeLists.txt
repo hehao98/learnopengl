@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 find_package(OpenGL REQUIRED)
 
@@ -118,7 +118,7 @@ target_link_libraries(nanosuit glfw ${OPENGL_gl_LIBRARY} assimp)
 add_executable(ObjectOutlining src/AdvancedOpenGL/ObjectOutlining.cpp src/glad.c)
 target_link_libraries(ObjectOutlining glfw ${OPENGL_gl_LIBRARY} assimp)
 
-add_executable(Blending src/AdvancedOpenGL/Blending.cpp src/glad.c src/AdvancedOpenGL/Explosion.cpp)
+add_executable(Blending src/AdvancedOpenGL/Blending.cpp src/glad.c src/AdvancedOpenGL/Explosion.cpp src/AdvancedOpenGL/NormalVisualizing.cpp)
 target_link_libraries(Blending glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_executable(PostProcessing-Inversion src/AdvancedOpenGL/PostProcessing-Inversion.cpp src/glad.c)
@@ -159,4 +159,7 @@ target_link_libraries(GeometryShader glfw ${OPENGL_gl_LIBRARY} assimp)
 
 add_executable(Explosion src/AdvancedOpenGL/Explosion.cpp src/glad.c)
 target_link_libraries(Explosion glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(NormalVisualing src/AdvancedOpenGL/NormalVisualizing.cpp src/glad.c)
+target_link_libraries(NormalVisualing glfw ${OPENGL_gl_LIBRARY} assimp)
 ##################################################
