@@ -168,4 +168,7 @@ target_link_libraries(Instancing glfw ${OPENGL_gl_LIBRARY})
 
 add_executable(AsteroidField src/AdvancedOpenGL/AsteroidField.cpp src/glad.c)
 target_link_libraries(AsteroidField glfw ${OPENGL_gl_LIBRARY} assimp)
+
+add_executable(GammaCorrection src/AdvancedOpenGL/GammaCorrection.cpp src/glad.c)
+target_link_libraries(GammaCorrection glfw ${OPENGL_gl_LIBRARY})
 ##################################################

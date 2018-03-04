@@ -6,11 +6,8 @@ mostly based on tutorial from [learnopengl.com](learnopengl.com).
 I'm tying to make some original and interesting demos as long as
 I have had enough knowledge and skills on OpenGL programming.
 #### Copyright
-Since this is a personal repository not intended for any commercial use,
-I hope the usage of third-party resources won't bring about any issue.
 Most of the resources come from [learnopengl.com](learnopengl.com), but
-there are some exceptions. 
-
+if there are any exceptions, they will be listed below. 
 #### Compile
 I created this repository on Ubuntu 16.04 with CLion, but I think it can
 also work on any Unix-based system with CMake.  
