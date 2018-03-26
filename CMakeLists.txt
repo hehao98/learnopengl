@@ -172,3 +172,8 @@ target_link_libraries(AsteroidField glfw ${OPENGL_gl_LIBRARY} assimp)
 add_executable(GammaCorrection src/AdvancedOpenGL/GammaCorrection.cpp src/glad.c)
 target_link_libraries(GammaCorrection glfw ${OPENGL_gl_LIBRARY})
 ##################################################
+
+############### Advanced Lighting ################
+add_executable(ShadowMapping src/AdvancedLighting/ShadowMapping.cpp src/glad.c)
+target_link_libraries(ShadowMapping glfw ${OPENGL_gl_LIBRARY})
+##################################################

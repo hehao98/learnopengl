@@ -13,6 +13,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 // GLM Math Library
 #include <glm/glm.hpp>
@@ -172,6 +173,60 @@ public:
         int modelLoc = glGetUniformLocation(ID, name.c_str());
         glUniform4fv(modelLoc, 1, glm::value_ptr(vec4));
     }
+};
+
+class BlinnPhongShader : public Shader
+{
+public:
+    struct PointLight {
+        glm::vec3 position;
+        glm::vec3 ambient;
+        glm::vec3 diffuse;
+        glm::vec3 specular;
+        // parameters to determine the light's diminish over range
+        float constant;
+        float linear;
+        float quadratic;
+    };
+
+    static const int MAX_LIGHT_SOURCE = 10;
+    std::vector<PointLight> pointLights;
+
+    BlinnPhongShader(const GLchar *vertexPath,
+                       const GLchar* fragmentPath, const GLchar *geometryPath = nullptr)
+            : Shader(vertexPath, fragmentPath, geometryPath) {}
+
+    int addPointLightSource(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse,
+                             glm::vec3 specular,
+                            float constant = 1.0, float linear = 0.09, float quadratic = 0.032)
+    {
+        if (pointLights.size() >= MAX_LIGHT_SOURCE) {
+            std::cout << "Max point light sourse capacity reached!" << std::endl;
+            return -1;
+        }
+        PointLight light;
+        light.position = position;
+        light.ambient  = ambient;
+        light.diffuse  = diffuse;
+        light.specular = specular;
+        light.constant = constant;
+        light.linear   = linear;
+        light.quadratic = quadratic;
+        pointLights.push_back(light);
+
+        std::string i = std::to_string(pointLights.size() - 1);
+        use();
+        setVec3("light[" + i + "].position", position);
+        setVec3("light[" + i + "].ambient", ambient);
+        setVec3("light[" + i + "].diffuse", diffuse);
+        setVec3("light[" + i + "].specular", specular);
+        setFloat("light[" + i + "].constant", constant);
+        setFloat("light[" + i + "].linear", linear);
+        setFloat("light[" + i + "].quadratic", quadratic);
+        setInt("lightCount", pointLights.size());
+        return 0;
+    }
+
 };
 
 
