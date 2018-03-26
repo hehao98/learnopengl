@@ -176,4 +176,7 @@ target_link_libraries(GammaCorrection glfw ${OPENGL_gl_LIBRARY})
 ############### Advanced Lighting ################
 add_executable(ShadowMapping src/AdvancedLighting/ShadowMapping.cpp src/glad.c)
 target_link_libraries(ShadowMapping glfw ${OPENGL_gl_LIBRARY})
+
+add_executable(NormalMapping src/AdvancedLighting/NormalMapping.cpp src/glad.c)
+target_link_libraries(NormalMapping glfw ${OPENGL_gl_LIBRARY})
 ##################################################
